@@ -1,12 +1,13 @@
 Local Histogram Equilization
 
 % defining the necessary constants and importing the images
-w_r_n = 51;
-w_c_n = 51; % means window row numbers and column numbers(size of window)
+w_r_n = 71;
+w_c_n = 71; % means window row numbers and column numbers(size of window)
 center_to_end_vertical = (w_r_n - 1)/2;
 center_to_end_horizontal = (w_c_n - 1)/2;
 im = imread('LC2.jpg');
 imshow(im);
+im = double(im);
 [rnum, cnum] = size(im);
 
 Normalised Histogram's Weight Calculating Function
@@ -28,23 +29,32 @@ Implementing Local Histogram Equilization
 mod_im = zeros(rnum, cnum);
 for i = 1:rnum
     for j = 1:cnum
-        available_intensity = [];
         intensity_value_ij = im(i,j);
-        for x = i-center_to_end_vertical:i+center_to_end_horizontal
-            for y = j - center_to_end_horizontal: j+center_to_end_horizontal
-                if ((1<=x)&&(x<=rnum))&&((1<=y)&&(y<=cnum))
-                    available_intensity = [available_intensity, im(x, y)];
-                end
-            end
-        end
+        x_top = max(1, i - center_to_end_vertical);
+        x_bottom = min(i + center_to_end_vertical, rnum);
+        y_left = max(1, j-center_to_end_horizontal);
+        y_right = min(cnum, j+center_to_end_horizontal);
+        sliced_array = im(x_top: x_bottom, y_left: y_right);
+        available_intensity = sliced_array(:)';
         norm_int_dens = norm_hist_density_calculator(available_intensity);
         cdf_value = sum(norm_int_dens(1:intensity_value_ij+1));
         modified_instensity = cdf_value*255;
-        mod_im(i, j) = modified_instensity;
+        mod_im(i, j) = round(modified_instensity);
     end
 end
 mod_im = uint8(mod_im);
 imshow(mod_im);
-imwrite(mod_im, 'LC2_window_size51_51.jpg');
+imwrite(mod_im, 'LC2_window_size71_71_vector.jpg');
 
-
+i  =10;
+j=10;
+intensity_value_ij = im(i, j)
+x_top = max(1, i - center_to_end_vertical)
+x_bottom = min(i + center_to_end_vertical, rnum)
+y_left = max(1, j-center_to_end_horizontal)
+y_right = min(cnum, j+center_to_end_horizontal)
+sliced_array = im(x_top: x_bottom, y_left: y_right)
+available_intensity = sliced_array(:)'
+norm_int_dens = norm_hist_density_calculator(available_intensity)
+cdf_value = sum(norm_int_dens(1:intensity_value_ij+1))
+modified_instensity = cdf_value*255
