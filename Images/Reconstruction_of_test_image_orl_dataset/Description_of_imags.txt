@@ -1,0 +1,1 @@
+The images in this folder are reconstructed using the mentioned number of prominent eigen faces, of an image that was not used in training. But other images of this person were used in training.
